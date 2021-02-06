@@ -189,7 +189,7 @@ def vpg(env_fn, actor_critic=core.MLPActorCritic, ac_kwargs=dict(), seed=0,
             epoch_ended = t == local_steps_per_epoch - 1
 
             if terminal or epoch_ended:
-                if epoch_ended and not (terminal):
+                if epoch_ended and not terminal:
                     print('Warning: trajectory cut off by epoch at %d steps.' % ep_len, flush=True)
                 if timeout or epoch_ended:
                     _, v, _ = ac.step(torch.as_tensor(o, dtype=torch.float32))
@@ -243,7 +243,7 @@ if __name__ == '__main__':
     from spinup.utils.run_utils import setup_logger_kwargs
     logger_kwargs = setup_logger_kwargs(args.exp_name, args.seed)
 
-    vpg(lambda : gym.make(args.env), actor_critic=core.MLPActorCritic,
+    vpg(lambda: gym.make(args.env), actor_critic=core.MLPActorCritic,
         ac_kwargs=dict(hidden_sizes=[args.hid]*args.l), gamma=args.gamma,
         seed=args.seed, steps_per_epoch=args.steps, epochs=args.epochs,
         logger_kwargs=logger_kwargs)
