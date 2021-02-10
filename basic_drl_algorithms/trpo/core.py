@@ -27,7 +27,7 @@ def count_variables(module):
 
 
 def discount_cumsum(x, discount):
-    return scipy.signal.lfilter([1], [1, float(-discount)], x[::-1], axis=0).[::-1]
+    return scipy.signal.lfilter([1], [1, float(-discount)], x[::-1], axis=0)[::-1]
 
 
 class Actor(nn.Module):
