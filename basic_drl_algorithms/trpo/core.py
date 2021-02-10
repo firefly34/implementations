@@ -1,3 +1,5 @@
+# TODO: Implement TRPO on your own as it is not available on pytorch.
+
 import numpy as np
 import torch.nn as nn
 import scipy.signal
