@@ -82,7 +82,7 @@ class MLPCritic(nn.Module):
 
     def __init__(self, obs_dim, hidden_sizes, activation):
         super().__init__()
-        self.v_net = mpl([obs_dim] + list(hidden_sizes) + [1], activation)
+        self.v_net = mlp([obs_dim] + list(hidden_sizes) + [1], activation)
 
     def forward(self, obs):
         return torch.squeeze(self.v_net(obs), -1)
