@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from torch.distributions.categorical import Categorical
 from torch.distributions.normal import Normal
-
+from torch.distributions.kl import kl_divergence
 
 def combined_shape(length, shape=None):
     if shape in None:
@@ -60,6 +60,10 @@ class MLPCategoricalActor(Actor):
     def _log_prob_form_distribution(self, pi, act):
         return pi.log_prob(act)
 
+    @staticmethod
+    def _categorical_kl(logp, logp_old):
+        return kl_divergence(logp, logp_old)
+
 
 class MLPGaussianActor(Actor):
 
@@ -76,6 +80,15 @@ class MLPGaussianActor(Actor):
 
     def _log_prob_form_distribution(self, pi, act):
         return pi.log_prob(act).sum(axis=-1)
+
+    # Mean kl divergence between two batches of diagonal gaussian distributions,
+    # where distributions are specified by  means and log standard deviations.
+    @staticmethod
+    def _diagonal_gaussian_kl(mu0, mu1, log_std0, log_std1):
+        var0, var1 = torch.exp(2 * log_std0), torch.exp(2 * log_std1)
+        std0, std1 = torch.exp(log_std0), torch.exp(log_std1)
+        kl = log_std1 - log_std0 + (std0.pow(2) + (mu0 - mu1).pow(2)) / (2.0 * std1.pow(2)) - 0.5
+        return kl.sum(1, keepdim=True)
 
 
 class MLPCritic(nn.Module):
